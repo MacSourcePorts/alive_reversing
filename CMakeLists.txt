@@ -17,6 +17,10 @@ if (NOT CI_PROVIDER)
     set(CI_PROVIDER "private (local build)")
 endif()
 
+if (AEGAME)
+    add_definitions(-DAEGAME)
+endif()
+
 # From: https://medium.com/@alasher/colored-c-compiler-output-with-ninja-clang-gcc-10bfe7f2b949
 option (FORCE_COLORED_OUTPUT "Always produce ANSI-colored output (GNU/Clang only)." FALSE)
 if (${FORCE_COLORED_OUTPUT})

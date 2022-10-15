@@ -316,21 +316,32 @@ bool RunningAsInjectedDll()
 
 static void __attribute__((constructor)) FixCWD()
 {
-    char* imagePath = strdup(_dyld_get_image_name(0));
-    if (!imagePath)
-    {
-        return;
-    }
-    
-    for (u32 i = strlen(imagePath); --i;)
-    {
-        if (imagePath[i] == '/')
-        {
-            imagePath[i] = 0;
-            chdir(imagePath);
-            break;
-        }
-    }
-    free(imagePath);
+    // char* imagePath = strdup(_dyld_get_image_name(0));
+    // if (!imagePath)
+    // {
+    //     return;
+    // }
+
+    // for (u32 i = strlen(imagePath); --i;)
+    // {
+    //     if (imagePath[i] == '/')
+    //     {
+    //         imagePath[i] = 0;
+    //         chdir(imagePath);
+    //         break;
+    //     }
+    // }
+    // free(imagePath);
+
+    #ifdef AEGAME
+        printf("AEGAME Defined \n");
+        char *prefPath = SDL_GetPrefPath("Oddworld", "AE");
+    #else
+        printf("AEGAME Not Defined\n");
+        char *prefPath = SDL_GetPrefPath("Oddworld", "AO");
+    #endif
+
+    chdir(prefPath);
+    free(prefPath);
 }
 #endif
