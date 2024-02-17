@@ -138,15 +138,9 @@ void DestroyObjects_4A1F20()
     pResourceManager_5C1BB0->LoadingLoop_465590(FALSE);
     for (s32 iterations = 0; iterations < 2; iterations++)
     {
-        s16 idx = 0;
-
-
-
-        while (idx < gBaseGameObject_list_BB47C4->Size())
+        for (s32 idx = 0; idx < gBaseGameObject_list_BB47C4->Size(); idx++)
         {
             BaseGameObject* pObj = gBaseGameObject_list_BB47C4->ItemAt(idx);
-            idx++;
-
             if (!pObj)
             {
                 break;
@@ -154,15 +148,8 @@ void DestroyObjects_4A1F20()
 
             if (!(pObj->field_6_flags.Get(BaseGameObject::eSurviveDeathReset_Bit9)))
             {
-                DynamicArrayIter iter;
-                iter.field_0_pDynamicArray = gBaseGameObject_list_BB47C4;
-                iter.field_4_idx = idx;
-                iter.Remove_At_Iter_40CCA0();
-
+                idx = gBaseGameObject_list_BB47C4->RemoveAt(idx);
                 pObj->VDestructor(1);
-
-                // Don't go forwards as we just removed an item otherwise we'd miss one
-                idx = iter.field_4_idx;
             }
         }
     }
@@ -503,6 +490,10 @@ EXPORT void CC Game_Run_466D40()
     pResourceManager_5C1BB0 = ae_new<ResourceManager>();
     pResourceManager_5C1BB0->ctor_464910();
 
+    // NOTE: We need to call Input_Init() before Init_Sound_DynamicArrays_And_Others() because of gLatencyHack
+    // which can be configured from the ini
+    Input_Init_491BC0();
+
     Init_Sound_DynamicArrays_And_Others_43BDB0();
 
     Camera camera;
@@ -528,7 +519,6 @@ EXPORT void CC Game_Run_466D40()
 
     camera.dtor_480E00();
 
-    Input_Init_491BC0();
     s16 cameraId = 25;
 #if DEVELOPER_MODE
     #if _WIN32
@@ -844,7 +834,7 @@ EXPORT void CC Game_Loop_467230()
         GetGameAutoPlayer().SyncPoint(SyncPoints::RenderStart);
 
         // Destroy objects with certain flags
-        for (s16 idx = 0; idx < gBaseGameObject_list_BB47C4->Size(); idx++)
+        for (s32 idx = 0; idx < gBaseGameObject_list_BB47C4->Size(); idx++)
         {
             BaseGameObject* pObj = gBaseGameObject_list_BB47C4->ItemAt(idx);
             if (!pObj)
@@ -854,11 +844,7 @@ EXPORT void CC Game_Loop_467230()
 
             if (pObj->field_6_flags.Get(BaseGameObject::eDead_Bit3) && pObj->field_6_flags.Get(BaseGameObject::eCantKill_Bit11) == false)
             {
-                DynamicArrayIter it;
-                it.field_0_pDynamicArray = gBaseGameObject_list_BB47C4;
-                it.field_4_idx = idx + 1;
-
-                it.Remove_At_Iter_40CCA0();
+                idx = gBaseGameObject_list_BB47C4->RemoveAt(idx);
                 pObj->VDestructor(1);
             }
         }
@@ -912,17 +898,15 @@ EXPORT void CC Game_Loop_467230()
     // Destroy all game objects
     while (!gBaseGameObject_list_BB47C4->IsEmpty())
     {
-        DynamicArrayIter iter = {};
-        iter.field_0_pDynamicArray = gBaseGameObject_list_BB47C4;
-        for (s16 idx = 0; idx < gBaseGameObject_list_BB47C4->Size(); idx++)
+        for (s32 idx = 0; idx < gBaseGameObject_list_BB47C4->Size(); idx++)
         {
             BaseGameObject* pObj = gBaseGameObject_list_BB47C4->ItemAt(idx);
-            iter.field_4_idx = idx + 1;
             if (!pObj)
             {
                 break;
             }
-            iter.Remove_At_Iter_40CCA0();
+
+            idx = gBaseGameObject_list_BB47C4->RemoveAt(idx);
             pObj->VDestructor(1);
         }
     }
