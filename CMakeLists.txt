@@ -80,7 +80,6 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/Source/AliveLibCommon)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/Source/AliveLibAO)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/Source/AliveLibAE)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/Source/relive)
-add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/Source/Tools/vab_tool)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/Source/Tools/relive_api)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/Source/Tools/relive_api_integration_test)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/Source/Tools/relive_api_unit_test)
@@ -90,7 +89,6 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/assets)
 # Setup unity builds
 set_target_properties(EasyLogging++ PROPERTIES UNITY_BUILD ON)
 set_target_properties(googletest    PROPERTIES UNITY_BUILD ON)
-set_target_properties(imgui         PROPERTIES UNITY_BUILD ON)
 
 # Disable for now because it breaks alivehook manager by setting unity_XX 
 # to always be the "group"
@@ -148,9 +146,6 @@ target_precompile_headers(
     "${CMAKE_CURRENT_SOURCE_DIR}/Source/AliveLibCommon/pch_shared.h"
 )
 
-if(WIN32)
-    target_precompile_headers(vab_tool REUSE_FROM AliveLibAO)
-endif()
 # -----------------------------------------------------------------------------
 
 if (WIN32 AND NOT MINGW)
